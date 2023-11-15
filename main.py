@@ -5,11 +5,11 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-SECRET_KEY = ""
+SECRET_KEY = "de6cd557cadb7cac2cf88592cc1dd3e5806d55421b7a7c7e5361887c84542672"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-fake_db = {
+db = {
     "joe": {
         "name": "John",
         "full_name": "Musyoki Wambua",
@@ -102,7 +102,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     if not user:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or Password", headers= {"WWW-Authenticate": "Bearer"})
     
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRES_MINUTES)
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub":user.username}, expires_delta= access_token_expires
     )
