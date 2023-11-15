@@ -11,10 +11,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 db = {
     "joe": {
-        "name": "John",
+        "name": "jose",
         "full_name": "Musyoki Wambua",
         "email": "joe@gmail.com",
-        "hashed_password": "$pbkdf2-sha256$2900",
+        "hashed_password": "$2b$12$NTk2utqSoBOJV9bidNj.ce3CgqGKb5TIn9K2IPWmSmnGQyERieltq",
         "disabled": False
     }
 }
@@ -81,7 +81,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
             raise credential_exception
         
         token_data = TokenData(username= username)
-    except: 
+    except JWTError: 
         raise credential_exception
     
     user = get_user(db, username=token_data.username)
@@ -106,12 +106,15 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token = create_access_token(
         data={"sub":user.username}, expires_delta= access_token_expires
     )
-    return({"access_token": access_token, "token_type": "Bearer"})
+    return({"access_token": access_token, "token_type": "bearer"})
 
-@app.get("/users/me", response_model= User)
+@app.get("/users/me/", response_model= User)
 async def read_users_me(current_user: User= Depends(get_current_active_user)):
     return current_user
 
-@app.get("/users/me/items", response_model= User)
+@app.get("/users/me/items")
 async def read_own_items(current_user: User= Depends(get_current_active_user)):
     return [{"item_id": 1, "owner": current_user}]
+
+# pwd = get_password_hash("1234")
+# print(pwd)
